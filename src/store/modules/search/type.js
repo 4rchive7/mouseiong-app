@@ -1,0 +1,4 @@
+export default {
+    SET_KEYWORD : "SEARCH/SET_KEYWORD",
+    SET_DATA : "SEARCH/SET_DATA"
+}

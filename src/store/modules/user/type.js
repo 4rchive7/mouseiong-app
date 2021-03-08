@@ -1,0 +1,4 @@
+export default {
+    SIGNIN_SUCCESS : 'USER/SIGNIN_SUCCESS',
+    SIGNIN_FAIL : 'USER/SIGNIN_FAIL'
+}

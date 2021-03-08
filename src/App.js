@@ -1,67 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+/* eslint-disable no-debugger, no-console */
+import React from 'react';
 import './App.css';
+import { Route} from 'react-router-dom';
+import HomeContainer from './container/HomeContainer';
+import SearchListContainer from './container/search/SearchListContainer';
+import SearchDetailContainer from './container/search/SearchDetailContainer';
+import Chat from './Chat';
+import SigninContainer from './container/signin/SigninContainer';
+import SignupDetailContainer from './container/signin/SignupDetailContainer';
+import SignupContainer from './container/signin/SignupContainer';
 
-function App() {
-  const [users, setUsers] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  let [flag, setFlag] = useState(0);
-
-
-  function displayData() {
-    setFlag(flag^=1);
+const App = (props) => {
+  
+  const tempId = "123";
+  const onClickHandler = (e)=>{
+    if(e.target.innerHTML === "clear session"){
+      sessionStorage.setItem("MOUSEION/ACCESSTOCKEN", 'invalid')
+    }
+    
+    if(e.target.innerHTML === "show session"){
+      console.log(sessionStorage.getItem("MOUSEION/ACCESSTOCKEN"));
+    }
   }
 
-  useEffect(() =>{
-    const fetchUsers = async () => {
-      try{
-        setError(null);
-        setUsers(null);
-        setLoading(true);
-        const response = await axios.get(
-          '/test'
-        );
-        setUsers(response.data);
-      }catch(e){
-        setError(e);
-      }
-      setLoading(false);
-    };
-    fetchUsers();
-  }, []);
-
-  if (loading) return <div>로딩중...</div>
-  if (error) return <div>Error is occured</div>
-  if (!users) return null;
   return (
-    <div className="App">
-      <header className="App-header">
-        {
-          flag > 0
-            ? <GetResultFromButton users={users}/>
-            : null
-        }
-        <button onClick={displayData}>Get Data</button>
-      </header>
-    </div>
+      <div className="App">
+        <header>
+          <button onClick={onClickHandler}>clear session</button>
+          <button onClick={onClickHandler}>show session</button>
+        </header>
+        <div className="App-header">     
+          <Route exact path="/signin" component={SigninContainer} />        
+          <Route exact path="/" component={HomeContainer} />   
+          <Route exact path="/signup" component={SignupContainer} />
+          <Route exact path="/signup/detail" component={SignupDetailContainer} />
+          <Route exact path="/search" component={SearchListContainer} />
+          <Route exact path={`/search/detail`} component={SearchDetailContainer} />
+          <Route exact path={`/chat`} component={Chat} />   
+        </div>
+      </div>
   );
 }
 
-function GetResultFromButton(props) {
-  let index = 0;
-  return (
-    <div>
-    <hr></hr>
-      {
-        props.users.map((user, index)=>{
-          return(<h4 key={++index}>{user.name}의 전화번호는 {user.phone}입니다</h4>);
-          
-        })
-      }
-      <hr></hr>
-
-    </div>
-  )
-}
 export default App;
