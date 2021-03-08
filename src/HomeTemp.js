@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const Home = () => {
+    console.log("Home loaded..");
     const [currPage, setPage] = useState("SearchPage");
     const [currDataTepe, setDataType] = useState(null);
     const [keyword, setKeyword] = useState(null);
@@ -16,7 +17,7 @@ export const Home = () => {
     return (
         <div>
             {currPage === "SearchPage" ? <SearchPage setPage={setPage} keyword={keyword} setKeyword={setKeyword} currDataTepe={currDataTepe} setDataType={setDataType} /> : null}
-            {currPage === "GetDataWithKeyword" ? <GetDataWithKeyword setPage={setPage} listData={listData} setListData={setListData} /> : null}
+            {currPage === "GetDataWithKeyword" ? <GetDataWithKeyword setPage={setPage} listData={listData} setListData={setListData} keyword={keyword}/> : null}
             {currPage === "ResultPage" ? <ResultPage setPage={setPage} pageStatus={pageStatus} setPageStatus={setPageStatus} listData={listData} setListData={setListData} setDetailPageIndex={setDetailPageIndex} /> : null}
             {currPage === "DetailResultPage" ? <ResultPage setPage={setPage} detailPageIndex={detailPageIndex} setDetailPageIndex={setDetailPageIndex} /> : null}
         </div>
@@ -38,14 +39,14 @@ const SearchPage = ({ setPage, keyword, setKeyword, currDataTepe, setDataType })
     );
 }
 
-const GetDataWithKeyword = ({ setPage, listData, setListData }) => {
+const GetDataWithKeyword = ({ setPage, listData, setListData, keyword }) => {
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     useEffect(() => {
         const execute = async () => {
-            const url = `/api/userList/search?keyword=journalist`;//=${pageStatus.keyword}`;
+            const url = `/api/userList/search?keyword=${keyword}`;//=${pageStatus.keyword}`;
             try {
                 setError(null);
                 setResult(null);

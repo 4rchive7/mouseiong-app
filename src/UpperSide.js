@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 
 export function show(){
     console.log("Imported");
