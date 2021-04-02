@@ -5,4 +5,5 @@ const SignupDetailContainer = props => {
     return <SignupDetail history={props.history}/>
 }
 
-export default connect()(SignupDetailContainer);
+export default SignupDetailContainer;
+

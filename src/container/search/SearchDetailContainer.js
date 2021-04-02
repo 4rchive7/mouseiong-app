@@ -13,4 +13,4 @@ const getParams = (state) =>{
     };
 }
 
-export default connect()(SearchDetailContainer);
+export default SearchDetailContainer;

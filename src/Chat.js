@@ -1,10 +1,11 @@
-import React, { useState, useRef} from 'react';
+import React, { useState, useRef, useEffect} from 'react';
 import SockJsClient from 'react-stomp';
 
 
 const Chat = () => {
 
     const $websocket = useRef(null);
+    const [tempWebSocket, setTempWebSocket] = useState(null);
     const [totalContext, setTotalContext] = useState([]);
     const [conn, setConn] = useState(0);
     const [chatMemberVo, setChatMemberVo] = useState({
@@ -14,13 +15,25 @@ const Chat = () => {
         message : null,
         date : null
     });
+    // const headers = {
+    //     "Content-Type": "application/json",
+    //     "Authorization" : "Bearer " + localStorage.getItem("MOUSEION/REFRESH_TOKEN")
+    // };
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization" : "Bearer " + sessionStorage.getItem("MOUSEION/ACCESS_TOKEN")
+    };
 
+    const config = {
+        headers : headers
+    };
+    
     const [newMessage, setNewMessage] = useState();
     const [page, setPage] = useState(0);
   
 
     
-    const updateChatMemberIntoServer = (vo)=>{
+    const updateChatMemberIntoServer = (vo)=>{      
         $websocket.current.sendMessage('/app/addUser', JSON.stringify(vo));   
     }
 
@@ -48,10 +61,12 @@ const Chat = () => {
     return (
         <div>
             <div>
-                {conn === 1 ? <SockJsClient url={"http://localhost:7221/chat"} topics={[`/topic/${chatMemberVo.roomId}`]} //, '/topic/Template']}
+                {conn === 1 ? <SockJsClient 
+                    url={"/chat"} 
+                    topics={[`/topic/${chatMemberVo.roomId}`]}
                     onMessage={ onMessage }
-                    onConnect={onConnect}
-                    onClose={onClose}
+                    onConnect={ onConnect }
+                    onClose={ onClose }
                     ref={$websocket}
                 /> : null}
                 {page === 0 ? <EntryToChat setConn={setConn} chatMemberVo={chatMemberVo} setChatMemberVo={setChatMemberVo}setPage={setPage} $websocket={$websocket} /> : null}

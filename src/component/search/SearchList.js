@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { searchKeyword } from "../../store/api/searchApi";
+import { requestWrapper } from "../../store/wrapper/JwtWrapper";
 
 const SearchList = props => {
     const [liList, setLiList] = useState(null);
@@ -18,6 +19,7 @@ const SearchList = props => {
         sessionStorage.setItem("MOUSEION/SearchDetail/email", jsonData[id].email);
         props.history.push('search/detail');
     }
+
     const genList = () =>{
         return jsonData.map((json, id)=>{
             return(
@@ -80,4 +82,4 @@ const Loading = (props)=>{
     );
 }
 
-export default connect()(SearchList);
+export default SearchList;

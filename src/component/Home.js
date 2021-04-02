@@ -1,38 +1,62 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { connect } from "react-redux";
+import { Encryption } from "../store/api/Encryption";
+import { jwtCheckRefreshToken } from "../store/api/userApi";
+import { isEmpty } from "../util/StringUtils";
 
-const Home = props => {
+const Home = ({history, setSignedIn, isSessionValid}) => {
+    const encryption = new Encryption("raw_data123123");
+    console.log(encryption.getEncryptedData);
     const [keyword, setKeyword] = useState(null);
-    
-     useEffect(()=>{
-        if(sessionStorage.getItem('MOUSEION/ACCESSTOCKEN') == null
-        || sessionStorage.getItem('MOUSEION/ACCESSTOCKEN') === "invalid"){
-            props.history.push("/signin");
+
+    useEffect(()=>{
+        if(!isSessionValid()){
+            history.push('/signin');
         }
     });
 
-    const onClickHandler = () => {
-        if(keyword != null) {
-            sessionStorage.setItem("keyword", keyword);
+    useEffect(() => {
+        const checkRefreshToken = async ()=>{
+            const result = await jwtCheckRefreshToken();
+            if(result){
+                setSignedIn(true);
+                console.log(result);
+            }
+        }
 
-            // axios.get('/search/keyword', {
-            //     params: { keyword: keyword }
-            // }).then(response => {
-            //     sessionStorage.setItem("MOUSEION/SearchList/listData", JSON.stringify(response.data));
-            // });
-            props.history.push("/search");
-        }else
-            console.log("Keyword is NULL!!!!");
+            checkRefreshToken();
+
+        // if (isEmpty(localStorage.getItem('MOUSEION/REFRESH_TOKEN'))) {
+        //     history.push("/signin");
+        // }else{
+        //     const refreshToken = localStorage.getItem('MOUSEION/REFRESH_TOKEN');
+        //     const aid = localStorage.getItem('MOUSEION/AID');
+        //     checkRefreshToken(refreshToken, aid);
+        // }
+    });
+
+    const onClickHandler = e => {
+        if (e.target.innerHTML === "Search") {
+            if (keyword != null) {
+                sessionStorage.setItem("keyword", keyword);
+                history.push("/search");
+            } else
+                console.log("Keyword is NULL!!!!");
+        }else if (e.target.innerHTML === "+"){
+            console.log("new Task");
+        }else if (e.target.innerHTML === "내 정보"){
+            history.push("/myinfo");
+        }
     }
 
     return (
         <div>
             <input type="text" placeholder="Waiting type something..." onChange={(e) => {
                 setKeyword(e.target.value);
-            }}/>
+            }} />
             <button onClick={onClickHandler}>Search</button>
+            <div onClick={onClickHandler}>+</div>
+            <button onClick={onClickHandler}>내 정보</button>
         </div>
     );
 }
-export default connect()(Home);
+export default Home;

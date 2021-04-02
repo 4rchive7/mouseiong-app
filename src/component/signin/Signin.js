@@ -1,45 +1,61 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
-import { connect } from "react-redux";
-import { authenticate } from "../../store/api/userApi";
+import { jwtAuthenticate, retryAuthenticate } from "../../store/api/userApi";
+import { isEmpty } from "../../util/StringUtils";
 
-const Signin = props => {
-    const [user, setUser] = useState();
+const Signin = ({history, setSignedIn, isSessionValid}) => {
+    
     const [accountInfo, setAccountInfo] = useState(null);
     const [isValidToAccess, setValidationToAccess] = useState(false);
-
-    // if(sessionStorage.getItem("MOUSEION/ACCESSTOCKEN") != null && sessionStorage.getItem("MOUSEION/ACCESSTOCKEN") !== 'invalid')
-    //     props.history.push("/");
-
+    const [reason, setReason] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+    
+    useEffect(()=>{
+        if(isSessionValid()){
+            history.push("/");
+        }
+    });
 
     useEffect(() => {
         
-        if (accountInfo != null && isValidToAccess == false) {
-            axios.post('/api/user/authenticate', accountInfo).then((response) => {
-                sessionStorage.setItem('MOUSEION/ACCESSTOCKEN', response.data);
-                setValidationToAccess(true);
-            }).catch((error) => {
-                setValidationToAccess(false);
-            });
-        }
         if(isValidToAccess){
             console.log("hit");
-            props.history.push("/");
+            history.push("/");
+        }else{
+            setErrorMessage(null);
+            if(reason === "NEED_AUTHENTICATION" || reason === "NEED_DETAIL"){
+                if(reason === "NEED_AUTHENTICATION")
+                    retryAuthenticate(sessionStorage.getItem('MOUSEION/email'));
+                history.push("/signup/detail");
+            }else if(reason === "NOT_VALID"){
+                setErrorMessage(reason);
+            }
         }
-        console.log(accountInfo);
-        console.log(isValidToAccess);
-    }, [accountInfo, isValidToAccess]);
+    }, [accountInfo, isValidToAccess, reason]);
 
-
+    const requestAuth = async (identity, password)=>{
+        const result = await jwtAuthenticate(identity, password);
+        if(result) {
+            setValidationToAccess(true);
+            setSignedIn(true);
+        }else
+            setErrorMessage("NOT_VALID");
+    }
+    
     const onClickHandler = (e) => {
-        if (e.target.innerHTML === "Signin") {
-            setAccountInfo({
-                identity: identity,
-                password: password
-            });
+        e.preventDefault();
+        if(identity != null && password != null){
+            if (e.target.innerHTML === "Signin") {
+                requestAuth(identity, password);
+            }
+        }else{
+            setErrorMessage("NOT_ENOUGH");
         }
-        if (e.target.innerHTML === "Signup") {
-            props.history.push("/signup");
+
+        if (e.target.innerHTML === "Signup") {            
+            history.push("/signup");
+        }
+        if(e.target.innerHTML === "Forget ID/PW"){            
+            history.push("/forget");
         }
     }
 
@@ -52,13 +68,12 @@ const Signin = props => {
             <input type="password" name="password" placeholder="password" onChange={e => setPassword(e.target.value)} /><br/>
             <button onClick={onClickHandler}>Signin</button>
             <button onClick={onClickHandler}>Signup</button>
+            <button onClick={onClickHandler}>Forget ID/PW</button>
+            <br/>
+            {errorMessage === "NOT_VALID" ? "이메일 또는 비밀번호를 확인해주세요":null}
+            {errorMessage === "NOT_ENOUGH" ? "이메일 또는 비밀번호를 모두 입력해주세요":null}
         </div>
     );
 }
 
-const getParams = (state) => {
-    return {
-        userInfo: state
-    }
-}
-export default connect(getParams)(Signin);
+export default Signin;

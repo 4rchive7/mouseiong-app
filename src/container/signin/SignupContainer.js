@@ -6,4 +6,4 @@ const SignupContainer = props => {
 
 }
 
-export default connect()(SignupContainer);
+export default SignupContainer;

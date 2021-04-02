@@ -1,24 +1,20 @@
-import { connect } from "react-redux";
 import Home from "../component/Home";
-import { setSearchKeyword, setSearchList } from "../store/modules/search/action";
+import MouseionContext from "../context/MouseionContext";
 
 
 const HomeContainer = (props) => {
-    return <Home history={props.history}/>
+    return (
+        <MouseionContext>
+            {({state, actions})=>(
+                <>
+                    {console.log(state.signedIn)}
+                    {state.signedIn ? null : props.history.push("/signin")}
+                    <Home history={props.history} setSignedIn={actions.setSignedIn} isSessionValid={actions.isSessionValid}/>
+                </>
+            )}
+        </MouseionContext>
+    )
 }
 
-const dispatchToProps = dispatch => ({
-    setSearchKeyword: (keyword) => dispatch(setSearchKeyword(keyword)),
-    setSearchList : (datas) => dispatch(setSearchList(datas))
-})
 
-const getParams = (state)=>({
-    keyword : state.search.keyword,
-    datas : state.search.datas
-
-})
-
-export default connect(
-    getParams,
-    dispatchToProps
-)(HomeContainer);
+export default HomeContainer;

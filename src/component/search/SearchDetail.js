@@ -44,4 +44,4 @@ const SearchDetail = (props) =>{
     );
 }
 
-export default connect()(SearchDetail);
+export default SearchDetail;

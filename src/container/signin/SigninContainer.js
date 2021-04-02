@@ -1,25 +1,20 @@
-import { connect } from "react-redux"
 import Signin from "../../component/signin/Signin"
-import { setSearchKeyword, setSearchList } from "../../store/modules/search/action"
+import MouseionContext from "../../context/MouseionContext";
+
 
 const SigninContainer = props => {
-    return <Signin  history={props.history}/>
+    return (
+        <MouseionContext>
+            {({ actions }) => (
+                <>
+                    <Signin history={props.history} setSignedIn={actions.setSignedIn} isSessionValid={actions.isSessionValid}/>
+                    
+                </>
+            )}
+        </MouseionContext>
+    )
 }
 
 
 
-const dispatchToProps = dispatch => ({
-    setSearchKeyword: (keyword) => dispatch(setSearchKeyword(keyword)),
-    setSearchList : (data) => dispatch(setSearchList(data))
-})
-
-const getParams = state => {
-    return {
-        state : state
-    }
-}
-
-export default connect(
-    getParams,
-    dispatchToProps
-)(SigninContainer)
+export default SigninContainer;

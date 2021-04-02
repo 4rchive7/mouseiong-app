@@ -50,7 +50,7 @@ const EmailAuth = (props)=>{
     useEffect(() => {
         if (looper >= 2 * 30) return;
 
-        const timeout = setTimeout(() => { setLooper(looper + 1) }, 2500);
+        const timeout = setTimeout(() => { setLooper(looper + 1) }, 1500);
         console.log("working outSide");
         const getEmailAuthInfo = async () => {
             const result = await checkEmailAuth(props.email);
@@ -93,6 +93,7 @@ const DetailInformation = (props) => {
             company : company,
             location : location
         })
+        sessionStorage.removeItem("MOUSEION/email");
         props.history.push("/signin");
     }
     
@@ -100,10 +101,10 @@ const DetailInformation = (props) => {
         <div>
             DetailInfo
             <p><input type="text" name="email" placeholder="company" onChange={onChangeHandler} /></p>
-            <p><input type="text" name="location" placeholder="name" onChange={onChangeHandler} /></p>
+            <p><input type="text" name="location" placeholder="location" onChange={onChangeHandler} /></p>
             <button onClick={onClickHandler}>submit</button>
         </div>
     );
 }
 
-export default connect()(SingupDetail);
+export default SingupDetail;

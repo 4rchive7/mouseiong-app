@@ -3,20 +3,12 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { createStore } from 'redux';
-import rootReducer from './store/rootReducer';
-import { useEffect } from 'react';
 
-let store = createStore(rootReducer);
-console.log(store.getState());
 
 ReactDOM.render(
   <BrowserRouter>
-    <Provider store={store}>
-      <App />
-    </Provider>
+      <App/>
   </BrowserRouter>
   ,
   document.getElementById('root')
