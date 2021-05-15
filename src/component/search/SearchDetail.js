@@ -10,6 +10,7 @@ const SearchDetail = (props) =>{
     let completed = false;
 
     const onClickHandler = ()=>{
+        sessionStorage.setItem('MOUSEION/chatMember', email);
         props.history.push(`/Chat`);
     }
 
